@@ -1,4 +1,4 @@
-package service
+package hash
 
 import (
 	"github.com/matthewhartstonge/argon2"
