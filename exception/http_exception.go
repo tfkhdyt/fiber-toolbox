@@ -26,5 +26,6 @@ func NewUnauthenticatedError(message string, errs ...error) error {
 }
 
 func NewUnauthorizedError(message string, errs ...error) error {
+	log.Warnw(message, "warn", errs[0])
 	return fiber.NewError(fiber.StatusForbidden, message)
 }
