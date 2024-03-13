@@ -10,15 +10,17 @@ import (
 	"github.com/tfkhdyt/fiber-toolbox/exception"
 )
 
-func ParsePayloadFromHeaders[T *StructClaims](c *fiber.Ctx) (T, error) {
+func ParsePayloadFromHeaders[T StructClaims](c *fiber.Ctx) (T, error) {
+	clm := new(T)
+
 	token, ok := c.Locals("user").(*jwt.Token)
 	if !ok {
-		return nil, exception.NewBadRequestError("failed to validate token")
+		return *clm, exception.NewBadRequestError("failed to validate token")
 	}
 
 	claims, ok := token.Claims.(T)
 	if !ok {
-		return nil, exception.NewBadRequestError("failed to validate claims")
+		return claims, exception.NewBadRequestError("failed to validate claims")
 	}
 
 	return claims, nil
