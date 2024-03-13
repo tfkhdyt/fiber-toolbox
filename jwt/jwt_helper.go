@@ -1,6 +1,9 @@
 package jwt
 
 import (
+	"os"
+	"time"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
 
@@ -44,4 +47,43 @@ func ParsePayload[T jwt.Claims](tokenString string, jwtKey string) (*T, error) {
 	}
 
 	return &claims, nil
+}
+
+type JwtType uint
+
+const (
+	Access JwtType = iota
+	Refresh
+)
+
+func GenerateJWT(claims *jwt.RegisteredClaims, jwtType JwtType) (string, error) {
+	var exp time.Time
+	var jwtKey string
+
+	switch jwtType {
+	case Access:
+		exp = time.Now().Add(24 * time.Hour * 7)
+		jwtKey = os.Getenv("JWT_ACCESS_KEY")
+	case Refresh:
+		exp = time.Now().Add(24 * time.Hour * 30)
+		jwtKey = os.Getenv("JWT_REFRESH_KEY")
+	default:
+		return "", exception.NewBadRequestError("invalid JWT type")
+	}
+
+	claims.ExpiresAt = jwt.NewNumericDate(exp)
+	claims.IssuedAt = jwt.NewNumericDate(time.Now())
+	claims.NotBefore = jwt.NewNumericDate(time.Now())
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	t, err := token.SignedString([]byte(jwtKey))
+	if err != nil {
+		return "", exception.NewInternalServerError(
+			"failed to sign jwt token",
+			err,
+		)
+	}
+
+	return t, nil
 }
