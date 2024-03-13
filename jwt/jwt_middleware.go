@@ -5,12 +5,11 @@ import (
 
 	jwtware "github.com/gofiber/contrib/jwt"
 	"github.com/gofiber/fiber/v2"
-	"github.com/golang-jwt/jwt/v5"
 
 	"github.com/tfkhdyt/fiber-toolbox/exception"
 )
 
-func JwtMiddleware[T jwt.Claims]() func(c *fiber.Ctx) error {
+func JwtMiddleware[T StructClaims]() func(c *fiber.Ctx) error {
 	clm := new(T)
 
 	return jwtware.New(jwtware.Config{

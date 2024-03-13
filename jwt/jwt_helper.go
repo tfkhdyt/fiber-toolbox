@@ -10,7 +10,7 @@ import (
 	"github.com/tfkhdyt/fiber-toolbox/exception"
 )
 
-func ParsePayloadFromHeaders[T jwt.Claims](c *fiber.Ctx) (*T, error) {
+func ParsePayloadFromHeaders[T StructClaims](c *fiber.Ctx) (*T, error) {
 	token, ok := c.Locals("user").(*jwt.Token)
 	if !ok {
 		return nil, exception.NewBadRequestError("failed to validate token")
@@ -24,7 +24,7 @@ func ParsePayloadFromHeaders[T jwt.Claims](c *fiber.Ctx) (*T, error) {
 	return &claims, nil
 }
 
-func ParsePayload[T jwt.Claims](tokenString string, jwtKey string) (*T, error) {
+func ParsePayload[T StructClaims](tokenString string, jwtKey string) (*T, error) {
 	clm := new(T)
 
 	token, err := jwt.ParseWithClaims(
