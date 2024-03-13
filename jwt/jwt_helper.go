@@ -10,7 +10,7 @@ import (
 	"github.com/tfkhdyt/fiber-toolbox/exception"
 )
 
-func ParsePayloadFromHeaders[T StructClaims](c *fiber.Ctx) (*T, error) {
+func ParsePayloadFromHeaders[T *StructClaims](c *fiber.Ctx) (T, error) {
 	token, ok := c.Locals("user").(*jwt.Token)
 	if !ok {
 		return nil, exception.NewBadRequestError("failed to validate token")
@@ -21,10 +21,10 @@ func ParsePayloadFromHeaders[T StructClaims](c *fiber.Ctx) (*T, error) {
 		return nil, exception.NewBadRequestError("failed to validate claims")
 	}
 
-	return &claims, nil
+	return claims, nil
 }
 
-func ParsePayload[T StructClaims](tokenString string, jwtKey string) (*T, error) {
+func ParsePayload[T StructClaims](tokenString string, jwtKey string) (T, error) {
 	clm := new(T)
 
 	token, err := jwt.ParseWithClaims(
@@ -35,7 +35,7 @@ func ParsePayload[T StructClaims](tokenString string, jwtKey string) (*T, error)
 		},
 	)
 	if err != nil {
-		return nil, exception.NewBadRequestError(
+		return *clm, exception.NewBadRequestError(
 			"failed to parse jwt payload",
 			err,
 		)
@@ -43,10 +43,10 @@ func ParsePayload[T StructClaims](tokenString string, jwtKey string) (*T, error)
 
 	claims, ok := token.Claims.(T)
 	if !ok {
-		return nil, exception.NewBadRequestError("failed to validate claims")
+		return *clm, exception.NewBadRequestError("failed to validate claims")
 	}
 
-	return &claims, nil
+	return claims, nil
 }
 
 type JwtType uint
