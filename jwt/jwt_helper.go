@@ -56,7 +56,12 @@ const (
 	Refresh
 )
 
-func GenerateJWT(claims *jwt.RegisteredClaims, jwtType JwtType) (string, error) {
+type StructClaims interface {
+	jwt.Claims
+	SetExp(time.Time)
+}
+
+func GenerateJWT[T StructClaims](claims T, jwtType JwtType) (string, error) {
 	var exp time.Time
 	var jwtKey string
 
@@ -71,9 +76,7 @@ func GenerateJWT(claims *jwt.RegisteredClaims, jwtType JwtType) (string, error) 
 		return "", exception.NewBadRequestError("invalid JWT type")
 	}
 
-	claims.ExpiresAt = jwt.NewNumericDate(exp)
-	claims.IssuedAt = jwt.NewNumericDate(time.Now())
-	claims.NotBefore = jwt.NewNumericDate(time.Now())
+	claims.SetExp(exp)
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
