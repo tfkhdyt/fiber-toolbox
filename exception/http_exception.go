@@ -1,6 +1,8 @@
 package exception
 
 import (
+	"fmt"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/log"
 )
@@ -8,6 +10,7 @@ import (
 func NewInternalServerError(message string, errs ...error) error {
 	if len(errs) > 0 {
 		log.Errorw(message, "err", errs[0])
+		return fiber.NewError(fiber.StatusInternalServerError, fmt.Sprintf("%v. Cause: %v", message, errs[0].Error()))
 	}
 	return fiber.NewError(fiber.StatusInternalServerError, message)
 }
