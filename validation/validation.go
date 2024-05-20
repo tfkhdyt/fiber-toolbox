@@ -12,9 +12,10 @@ import (
 	"github.com/tfkhdyt/fiber-toolbox/exception"
 )
 
+// Creating variables for validator and translator.
 var (
-	validate *validator.Validate
-	trans    ut.Translator
+	validate *validator.Validate // Validator instance.
+	trans    ut.Translator       // Translator instance.
 )
 
 func init() {
@@ -43,6 +44,7 @@ func validateStruct(payload any) []string {
 	return nil
 }
 
+// Function to validate request body using Fiber context and return error if validation fails.
 func ValidateBody(c *fiber.Ctx, payload any) error {
 	if err := c.BodyParser(payload); err != nil {
 		log.Println("error(body-parser):", err)
