@@ -90,3 +90,27 @@ func NewUnauthorizedError(message string, errs ...error) error {
 	}
 	return fiber.NewError(fiber.StatusForbidden, message)
 }
+
+// NewConflictError creates a new fiber.Error with a status code of 409 (Conflict).
+func NewConflictError(message string, errs ...error) error {
+	if len(errs) > 0 {
+		log.Warnw(message, "cause", errs[0])
+	}
+	return fiber.NewError(fiber.StatusConflict, message)
+}
+
+// NewPayloadTooLargeError creates a new fiber.Error with a status code of 413 (Payload Too Large).
+func NewPayloadTooLargeError(message string, errs ...error) error {
+	if len(errs) > 0 {
+		log.Warnw(message, "cause", errs[0])
+	}
+	return fiber.NewError(fiber.StatusRequestEntityTooLarge, message)
+}
+
+// NewUnsupportedMediaTypeError creates a new fiber.Error with a status code of 415 (Unsupported Media Type).
+func NewUnsupportedMediaTypeError(message string, errs ...error) error {
+	if len(errs) > 0 {
+		log.Warnw(message, "cause", errs[0])
+	}
+	return fiber.NewError(fiber.StatusUnsupportedMediaType, message)
+}
